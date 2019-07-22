@@ -62,9 +62,9 @@ namespace CreateCord
                 MessageBox.Show("请选择需要生成的表", "提示");
                 return;
             }
-            if(t_path.Text.Substring(t_path.Text.Trim().Length-1,1)=="\\")
+            if (t_path.Text.Substring(t_path.Text.Trim().Length - 1, 1) == "\\")
 
-            subPathName = "" + t_path.Text + "" + fileName.Text + ""; //创建文件夹
+                subPathName = "" + t_path.Text + "" + fileName.Text + ""; //创建文件夹
             else
                 subPathName = "" + t_path.Text + "\\" + fileName.Text + ""; //创建文件夹
 
@@ -74,26 +74,22 @@ namespace CreateCord
                 System.IO.Directory.CreateDirectory(subPathName);
             }
             DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json'");
-            DataTable lists = IcreateType.GetData(tableName);
+            DataTable listTable = IcreateType.GetData(tableName);
 
             if (list.Length != 0)
             {
                 string name = list[0][0].ToString();
                 strvalue = string.Empty;
-                if (lists.Rows.Count > 0)
+                if (listTable.Rows.Count > 0)
                 {
 
-                    strvalue = lists.Rows[0]["" + name + ""].ToString();
+                    strvalue = listTable.Rows[0]["" + name + ""].ToString();
                 }
             }
-            if (str_jsonschame != null)
-            {
-                CreateModel(str_jsonschame);
-            }
-            else
-            {
+            if (null == str_TemporaryStr || str_TemporaryStr == ""  || str_TemporaryStr.Length == 0 )
                 CreateModel(strvalue);
-            }
+            else
+                CreateModel(str_TemporaryStr);
 
         }
 
@@ -219,6 +215,8 @@ namespace CreateCord
         List<List<string>> lists = new List<List<string>>();
         public void CreateModel(string strJson)
         {
+            lists.Clear();
+          
             subPath = subPathName + "\\" + ModelName.Text + "";
             if (false == System.IO.Directory.Exists(subPath))
             {
@@ -632,6 +630,7 @@ namespace CreateCord
             TableName = StrToUpper(dataName);
             tableName = dataName;
             str_TemporaryStr = "";
+            strvalue = "";
         }
         #endregion
         #region 获取需要生成表的名称====================
