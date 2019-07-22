@@ -658,16 +658,25 @@ namespace CreateCord
         private void btnJsonEdit_Click(object sender, EventArgs e)
         {
             DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json' or type='varchar'");
-            string name = list[0]["name"].ToString();
-            if (list.Length != 0)
+            if (list.Length == 0)
             {
-
-                DataTable lists = IcreateType.GetData(tableName);
-                strvalue = lists.Rows[0]["" + name + ""].ToString();
-
+                openJsonEdit("");
             }
-            string str_json_out = strvalue;
-            openJsonEdit(str_json_out);
+            else
+            {
+                string name = list[0]["name"].ToString();
+                if (list.Length != 0)
+                {
+
+                    DataTable lists = IcreateType.GetData(tableName);
+                    strvalue = lists.Rows[0]["" + name + ""].ToString();
+
+                }
+                string str_json_out = strvalue;
+                openJsonEdit(str_json_out);
+            }
+        
+           
             str_TemporaryStr = str_jsonschame;
             
         }
