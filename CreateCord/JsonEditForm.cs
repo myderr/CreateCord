@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 namespace CreateCord
@@ -24,7 +25,21 @@ namespace CreateCord
         }
         private void b_ok_Click(object sender, EventArgs e)
         {
-            CodeMain codeGenerator = (CodeMain)this.Owner;
+            try
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                Dictionary<string, Object> json = (Dictionary<string, Object>)serializer.DeserializeObject(this.rtb_jsonedit.Text);
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("JSON格式出错", "提示");
+                return;
+            }
+
+
+   
+            createCode codeGenerator = (createCode)this.Owner;
             codeGenerator.str_jsonschame = this.rtb_jsonedit.Text;
             Close();
         }
@@ -37,6 +52,7 @@ namespace CreateCord
         private void JsonEditForm_Load(object sender, EventArgs e)
         {
             this.rtb_jsonedit.Text = str_json_column;
+
         }
     }
 }

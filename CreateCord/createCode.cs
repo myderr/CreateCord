@@ -18,42 +18,59 @@ namespace CreateCord
         {
             InitializeComponent();
         }
-        string ConnectionString = string.Empty;
-        public string TableName = string.Empty;
+        string ConnectionString = string.Empty;  //公共数据库连接字符串
+        public string tableName = string.Empty;
+        public string TableName = string.Empty;  //需要生成的表名
         public createCode(string ConnectionStrings)
         {
             InitializeComponent();
             ConnectionString = ConnectionStrings;
+        }
+        private string String;
+        public string str_jsonschame  //
+        {
+            get { return String; }
+            set { String = value; }
+        }
+        private string TemporaryStr; //存放临时JSON
+        public string str_TemporaryStr
+        {
+            get { return TemporaryStr; }
+            set { TemporaryStr = value; }
         }
         string subPathName = string.Empty;
         ICreateType IcreateType = null;
         string subPath = string.Empty;//实体路径
         string MgPath = string.Empty;//数据层路径
         string CpPath = string.Empty;//逻辑层路径
-        string strvalue = string.Empty;
+        string strvalue = string.Empty;//保存json
         private void createCode_Load(object sender, EventArgs e)
         {
+
             IcreateType = new PGCreateCode(ConnectionString);
+            // IcreateType = new SQLCreateCode("server = (local); database = FHIR; uid = sa; pwd = 123456");
             DataTable dt_Tables = IcreateType.GetTables();
-     
+
             dgridTable.DataSource = dt_Tables;
             dgridTable.ClearSelection();
         }
         private void button1_Click(object sender, EventArgs e)
         {
+
             if (null == dgvColumns.DataSource)
             {
                 MessageBox.Show("请选择需要生成的表", "提示");
                 return;
             }
             subPathName = "" + t_path.Text + "" + fileName.Text + ""; //创建文件夹
+
             if (false == System.IO.Directory.Exists(subPathName))
             {
                 //创建pic文件夹
                 System.IO.Directory.CreateDirectory(subPathName);
             }
-            DataRow[] list = IcreateType.GetColumns(TableName).Select("type='jsonb' or type='json'");
-            DataTable lists = IcreateType.GetData(TableName);
+            DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json'");
+            DataTable lists = IcreateType.GetData(tableName);
 
             if (list.Length != 0)
             {
@@ -65,20 +82,28 @@ namespace CreateCord
                     strvalue = lists.Rows[0]["" + name + ""].ToString();
                 }
             }
-            CreateModel(strvalue);
+            if (str_jsonschame != null)
+            {
+                CreateModel(str_jsonschame);
+            }
+            else
+            {
+                CreateModel(strvalue);
+            }
+
         }
-      
+
         public void findNode(object obj, string fileName, string fastName, bool IsF)
         {
             if (null == obj)
             {
                 if (IsF)
                 {
-                    FileOperate.FWrite("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
                 return;
             }
@@ -87,11 +112,11 @@ namespace CreateCord
             {
                 if (IsF)
                 {
-                    FileOperate.FWrite("public int " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public int " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public int " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public int " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
 
                 return;
@@ -100,11 +125,11 @@ namespace CreateCord
             {
                 if (IsF)
                 {
-                    FileOperate.FWrite("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public string " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
 
                 return;
@@ -113,11 +138,11 @@ namespace CreateCord
             {
                 if (IsF)
                 {
-                    FileOperate.FWrite("public bool " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public bool " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public bool " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public bool " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
 
                 return;
@@ -128,13 +153,13 @@ namespace CreateCord
                 List<string> keys = chi.Keys.ToList();
                 if (IsF)
                 {
-                    FileOperate.FWrite("public " + fileName + "Content  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public " + fileName + "Content  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public " + fileName + "Content  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public " + fileName + "Content  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
-                FileOperate.FWrite("using System;\r\nusing System.Collections.Generic;\r\nnamespace " + ModelName.Text.Trim() + "\r\n{\r\npublic class " + fileName + "Content\r\n{\r\n", "" + subPath + "\\" + fileName + "Content.cs");
+                FileOperate.WriteAppendStr("using System;\r\nusing System.Collections.Generic;\r\nnamespace " + ModelName.Text.Trim() + "\r\n{\r\npublic class " + fileName + "Content\r\n{\r\n", "" + subPath + "\\" + fileName + "Content.cs");
                 int i = 0;
                 foreach (var s in keys)
                 {
@@ -142,7 +167,7 @@ namespace CreateCord
                     findNode(chi[s], s, fileName, false);
                     if (i == keys.Count)
                     {
-                        FileOperate.FWrite("}\r\n}\r\n", "" + subPath + "\\" + fileName + "Content.cs");
+                        FileOperate.WriteAppendStr("}\r\n}\r\n", "" + subPath + "\\" + fileName + "Content.cs");
 
                     }
                 }
@@ -154,13 +179,13 @@ namespace CreateCord
                 List<string> keys = chi.Keys.ToList();
                 if (IsF)
                 {
-                    FileOperate.FWrite("public List<" + fileName + "Content>  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
+                    FileOperate.WriteAppendStr("public List<" + fileName + "Content>  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
                 }
                 else
                 {
-                    FileOperate.FWrite("public List<" + fileName + "Content>  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
+                    FileOperate.WriteAppendStr("public List<" + fileName + "Content>  " + fileName + "  {get;set;}\r\n", "" + subPath + "\\" + fastName + "Content.cs");
                 }
-                FileOperate.FWrite("using System;\r\nusing System.Collections.Generic;\r\nnamespace " + ModelName.Text.Trim() + "\r\n{\r\npublic class " + fileName + "Content\r\n{\r\n", "" + subPath + "\\" + fileName + "Content.cs");
+                FileOperate.WriteAppendStr("using System;\r\nusing System.Collections.Generic;\r\nnamespace " + ModelName.Text.Trim() + "\r\n{\r\npublic class " + fileName + "Content\r\n{\r\n", "" + subPath + "\\" + fileName + "Content.cs");
                 int i = 0;
                 foreach (var s in keys)
                 {
@@ -169,7 +194,7 @@ namespace CreateCord
                     findNode(chi[s], s, fileName, false);
                     if (i == keys.Count)
                     {
-                        FileOperate.FWrite("}\r\n}\r\n", "" + subPath + "\\" + fileName + "Content.cs");
+                        FileOperate.WriteAppendStr("}\r\n}\r\n", "" + subPath + "\\" + fileName + "Content.cs");
 
                     }
 
@@ -186,8 +211,8 @@ namespace CreateCord
                 t_path.Text = resultFile;
             }
         }
-
         #region 自动生成实体类=======================
+        List<List<string>> lists = new List<List<string>>();
         public void CreateModel(string strJson)
         {
             subPath = subPathName + "\\" + ModelName.Text + "";
@@ -196,37 +221,140 @@ namespace CreateCord
                 //创建pic文件夹
                 System.IO.Directory.CreateDirectory(subPath);
             }
+
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             Dictionary<string, Object> json = (Dictionary<string, Object>)serializer.DeserializeObject(strJson);
-
-            FileOperate.FWrite("using System;\r\nusing System.Collections.Generic;\r\nnamespace " + ModelName.Text.Trim() + "\r\n{\r\npublic class " + TableName + "\r\n{\r\n", "" + subPath + "\\" + TableName + ".cs");
             if (json != null)
             {
                 List<string> keys = json.Keys.ToList();
+                List<string> fList = new List<string>();
+                lists.Add(fList);
+                fList.Add("[Serializable]");
+                fList.Add("public class " + TableName);
+                fList.Add("{");
                 foreach (var s in keys)
                 {
-                    findNode(json[s], s, "test", true);
+                    //findNode(json[s], s, "test", true);
+                    findNode2(s, json[s], fList);
                 }
-            }
-
-
-            DataRow[] Rowlist = IcreateType.GetColumns(TableName).Select("type <> 'jsonb' and type <>'json'");
-            for (int i = 0; i < Rowlist.Length; i++)
-            {
-                string classType = FileOperate.SqlTypeTope(Rowlist[i][1].ToString());
-                if (classType == "")
+                DataRow[] Rowlist = IcreateType.GetColumns(tableName).Select("type <> 'jsonb' and type <>'json'");
+                for (int i = 0; i < Rowlist.Length; i++)
                 {
-                    classType = "string";
+                    string classType = FileOperate.SqlTypeTope(Rowlist[i][1].ToString());
+                    if (classType == "")
+                    {
+                        classType = "string";
+                    }
+                    string className = Rowlist[i][0].ToString();
+                    fList.Add("public  " + classType + "  " + className + "    {get;set;}");
                 }
-                string className = Rowlist[i][0].ToString();
-                FileOperate.FWrite("public  " + classType + "  " + className + "    {get;set;}\r\n", "" + subPath + "\\" + TableName + ".cs");
-
+                fList.Add("}");
+                List<string> header = new List<string>();
+                header.Add("using System;");
+                header.Add("using System.Collections.Generic;");
+                header.Add("namespace " + ModelName.Text.Trim());
+                header.Add("{");
+                FileOperate.FileWrite(header, subPath + "\\" + TableName + ".cs");
+                foreach (List<string> clist in lists)
+                {
+                    FileOperate.WriteAppendList(clist, subPath + "\\" + TableName + ".cs");
+                }
+                FileOperate.WriteAppendStr("\r\n}", subPath + "\\" + TableName + ".cs");
             }
-            FileOperate.FWrite("}\r\n}\r\n", "" + subPath + "\\" + TableName + ".cs");
+            else
+            {
+                List<string> header = new List<string>();
+                header.Add("using System;");
+                header.Add("using System.Collections.Generic;");
+                header.Add("namespace " + ModelName.Text.Trim());
+                header.Add("{");
+                header.Add("[Serializable]");
+                header.Add("public class " + TableName);
+                header.Add("{");
+                FileOperate.FileWrite(header, subPath + "\\" + TableName + ".cs");
+
+                DataRow[] Rowlist = IcreateType.GetColumns(tableName).Select("type <> 'jsonb' and type <>'json'");
+                for (int i = 0; i < Rowlist.Length; i++)
+                {
+                    string classType = FileOperate.SqlTypeTope(Rowlist[i][1].ToString());
+                    if (classType == "")
+                    {
+                        classType = "string";
+                    }
+                    string className = Rowlist[i][0].ToString();
+                    header.Add("public  " + classType + "  " + className + "    {get;set;}");
+                }
+                header.Add("}");
+                header.Add("}");
+                FileOperate.FileWrite(header, subPath + "\\" + TableName + ".cs");
+            }
+            
             CreateManger(TableName);
             CreateComponent((DataTable)dgvColumns.DataSource);
             CreateControllers((DataTable)dgvColumns.DataSource);
-        } 
+        }
+
+        public void findNode2(string key, object objView, List<string> list)
+        {
+            if (null == objView)
+            {
+                list.Add("public string " + key + " { get; set; }");
+                return;
+            }
+            var type = objView.GetType().Name;
+            switch (type)
+            {
+                case "Int32":
+                    list.Add("public int " + key + " { get; set; }");
+                    //return;
+                    break;
+                case "String":
+                    list.Add("public string " + key + " { get; set; }");
+                    //return;
+                    break;
+                case "Boolean":
+                    list.Add("public bool " + key + " { get; set; }");
+                    //return;
+                    break;
+                case "Dictionary`2":
+                    list.Add("public " + key + "Content  " + key + "  {get;set;}");
+                    Dictionary<string, Object> children = objView as Dictionary<string, Object>;
+                    List<string> keys = children.Keys.ToList();
+                    List<string> cList = new List<string>();
+                    lists.Add(cList);
+                    cList.Add("[Serializable]");
+                    cList.Add("public class " + StrToUpper(key) + "Content");
+                    cList.Add("{");
+                    foreach (string cKey in keys)
+                    {
+                        findNode2(cKey, children[cKey], cList);
+                    }
+                    cList.Add("}");
+                    break;
+                case "Object[]":
+                    list.Add("public List<" + StrToUpper(key) + "Content>  " + key + "  {get;set;}");
+                    Object[] objArr = objView as Object[];
+                    Dictionary<string, Object> children2 = objArr[0] as Dictionary<string, Object>;
+                    List<string> keys2 = children2.Keys.ToList();
+
+                    List<string> cList2 = new List<string>();
+                    lists.Add(cList2);
+                    cList2.Add("[Serializable]");
+                    cList2.Add("public class " + StrToUpper(key) + "Content");
+                    cList2.Add("{");
+                    foreach (string cKey in keys2)
+                    {
+                        findNode2(cKey, children2[cKey], cList2);
+                    }
+                    cList2.Add("}");
+
+                    break;
+                default:
+
+                    break;
+            }
+        }
+
         #endregion
         #region 自动生成数据访问层=================
         /// <summary>
@@ -234,6 +362,7 @@ namespace CreateCord
         /// </summary>
         private void CreateManger(string ClassName)
         {
+            ClassName = StrToUpper(ClassName);
             //检查是否存在文件夹
             MgPath = subPathName + "/" + ManagerName.Text + "";
             if (false == System.IO.Directory.Exists(MgPath))
@@ -255,12 +384,12 @@ namespace CreateCord
             List<string> code_list = new List<string>();
             code_list.Add("using System;");
 
-            code_list.Add(string.Format("using {0};",ModelName.Text.Trim()));
+            code_list.Add(string.Format("using {0};", ModelName.Text.Trim()));
             code_list.Add("using System.Collections.Generic;");
             code_list.Add("using System.Linq;");
             code_list.Add("using System.Text;");
             code_list.Add(" using System.Threading.Tasks;");
-            code_list.Add(" namespace "+ManagerName.Text.Trim()+"");
+            code_list.Add(" namespace " + ManagerName.Text.Trim() + "");
             code_list.Add("{");
             code_list.Add(" public class " + ClassName + "Manager :ManagerBase<" + ClassName + ">");
             code_list.Add("{");
@@ -308,7 +437,7 @@ namespace CreateCord
             code_list.Add(" using System.Threading.Tasks;");
             code_list.Add(string.Format("using {0};", ManagerName.Text.Trim()));
             code_list.Add(string.Format("using {0};", ModelName.Text.Trim()));
-            code_list.Add(" namespace "+ConpontentName.Text.Trim()+"");
+            code_list.Add(" namespace " + ConpontentName.Text.Trim() + "");
             code_list.Add("{");
             code_list.Add(" public class " + TableName + "Component :ComponentBase<" + TableName + "," + TableName + "Manager>");
             code_list.Add("{");
@@ -373,6 +502,7 @@ namespace CreateCord
                 System.IO.Directory.CreateDirectory(subPath);
             }
             string className = dataJson.Rows[0][0].ToString();
+            className = StrToUpper(className);
             List<string> code_list = new List<string>();
             code_list.Add("using System;");
             code_list.Add("using " + ConpontentName.Text + ";");
@@ -389,7 +519,7 @@ namespace CreateCord
 
             code_list.Add("public string Get()");
             code_list.Add("{");
-            code_list.Add("string str = BaseFunction.GetControllerInfo<"+ className + "Controller>();");
+            code_list.Add("string str = BaseFunction.GetControllerInfo<" + className + "Controller>();");
             code_list.Add("return str;");
             code_list.Add("}");
             int i = 0;
@@ -470,7 +600,7 @@ namespace CreateCord
 
         }
         #endregion
-
+        #region 根据用户点击的表名自动创建服务成================
         private void dgridTable_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             string dataName = dgridTable.Rows[e.RowIndex].Cells["name"].Value.ToString();
@@ -481,6 +611,7 @@ namespace CreateCord
             dt.Columns.Add("服务名");
             dt.Columns.Add("类型");
             dt.Columns.Add("查询条件");
+
             string[] strArr = { "Insert", "Update", "Delete", "GetAll" };
             for (int i = 0; i < strArr.Length; i++)
             {
@@ -492,9 +623,12 @@ namespace CreateCord
             }
             this.dgvColumns.DataSource = dt;
             ((DataGridViewComboBoxColumn)dgvColumns.Columns["类型"]).DefaultCellStyle.NullValue = "HttpGet";
-            TableName = dataName;
+            TableName =StrToUpper(dataName);
+            tableName = dataName;
 
         }
+        #endregion
+        #region 获取需要生成表的名称====================
         /// <summary>
         /// 获取需要生成表的名称
         /// </summary>
@@ -503,6 +637,7 @@ namespace CreateCord
         {
             return dgridTable.SelectedRows[0].Cells["name"].Value.ToString();
         }
+        #endregion
 
         private void BtnAddRow_Click(object sender, EventArgs e)
         {
@@ -516,8 +651,55 @@ namespace CreateCord
             dr[0] = TableName;
             table.Rows.Add(dr);
             dgvColumns.Rows[table.Rows.Count - 1].Cells[1].ReadOnly = false;
-            
+
 
         }
+
+        private void btnJsonEdit_Click(object sender, EventArgs e)
+        {
+            DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json' or type='varchar'");
+            string name = list[0]["name"].ToString();
+            if (list.Length != 0)
+            {
+
+                DataTable lists = IcreateType.GetData(tableName);
+                strvalue = lists.Rows[0]["" + name + ""].ToString();
+
+            }
+            string str_json_out = strvalue;
+            openJsonEdit(str_json_out);
+            str_TemporaryStr = str_jsonschame;
+            
+        }
+        public void openJsonEdit(string str_jsonschame)
+        {
+            JsonEditForm JsonEdit = new JsonEditForm();
+            if (str_TemporaryStr != null)
+            {
+                JsonEdit.str_json_column = str_TemporaryStr;
+            }
+            else
+            {
+                JsonEdit.str_json_column = str_jsonschame;
+
+            }
+
+            JsonEdit.ShowDialog(this);
+
+        }
+
+        #region 将首字符大写=========================
+        /// <summary>
+        /// 将首字符大写
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public string StrToUpper(string s)
+        {
+            string str = s.Substring(0, 1).ToUpper() + s.Substring(1);
+            return str;
+
+        } 
+        #endregion
     }
 }

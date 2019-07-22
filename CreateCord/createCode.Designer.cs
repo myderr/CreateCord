@@ -53,7 +53,9 @@
             this.服务名 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.类型 = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.查询条件 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.JSON值 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnAddRow = new System.Windows.Forms.Button();
+            this.btnJsonEdit = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgridTable)).BeginInit();
@@ -124,7 +126,7 @@
             this.ConpontentName.Name = "ConpontentName";
             this.ConpontentName.Size = new System.Drawing.Size(100, 21);
             this.ConpontentName.TabIndex = 18;
-            this.ConpontentName.Text = "WebApiBLL";
+            this.ConpontentName.Text = "BLL";
             // 
             // label5
             // 
@@ -141,7 +143,7 @@
             this.ManagerName.Name = "ManagerName";
             this.ManagerName.Size = new System.Drawing.Size(100, 21);
             this.ManagerName.TabIndex = 16;
-            this.ManagerName.Text = "WebApiDAL";
+            this.ManagerName.Text = "DAL";
             // 
             // label4
             // 
@@ -158,7 +160,7 @@
             this.ModelName.Name = "ModelName";
             this.ModelName.Size = new System.Drawing.Size(100, 21);
             this.ModelName.TabIndex = 14;
-            this.ModelName.Text = "WebApiModel";
+            this.ModelName.Text = "Model";
             // 
             // lABEL
             // 
@@ -277,7 +279,8 @@
             this.表名称,
             this.服务名,
             this.类型,
-            this.查询条件});
+            this.查询条件,
+            this.JSON值});
             this.dgvColumns.Location = new System.Drawing.Point(6, 20);
             this.dgvColumns.Name = "dgvColumns";
             this.dgvColumns.RowTemplate.Height = 23;
@@ -313,21 +316,39 @@
             this.查询条件.HeaderText = "查询条件";
             this.查询条件.Name = "查询条件";
             // 
+            // JSON值
+            // 
+            this.JSON值.DataPropertyName = "JSON值";
+            this.JSON值.HeaderText = "JSON值";
+            this.JSON值.Name = "JSON值";
+            this.JSON值.Visible = false;
+            // 
             // btnAddRow
             // 
-            this.btnAddRow.Location = new System.Drawing.Point(847, 140);
+            this.btnAddRow.Location = new System.Drawing.Point(817, 140);
             this.btnAddRow.Name = "btnAddRow";
             this.btnAddRow.Size = new System.Drawing.Size(75, 23);
             this.btnAddRow.TabIndex = 1;
-            this.btnAddRow.Text = "新增列";
+            this.btnAddRow.Text = "新增服务";
             this.btnAddRow.UseVisualStyleBackColor = true;
             this.btnAddRow.Click += new System.EventHandler(this.BtnAddRow_Click);
+            // 
+            // btnJsonEdit
+            // 
+            this.btnJsonEdit.Location = new System.Drawing.Point(704, 140);
+            this.btnJsonEdit.Name = "btnJsonEdit";
+            this.btnJsonEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnJsonEdit.TabIndex = 4;
+            this.btnJsonEdit.Text = "JSON编辑";
+            this.btnJsonEdit.UseVisualStyleBackColor = true;
+            this.btnJsonEdit.Click += new System.EventHandler(this.btnJsonEdit_Click);
             // 
             // createCode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1045, 517);
+            this.Controls.Add(this.btnJsonEdit);
             this.Controls.Add(this.btnAddRow);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -369,12 +390,14 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.DataGridView dgvColumns;
+        private System.Windows.Forms.DataGridView dgridTable;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name;
+        private System.Windows.Forms.Button btnAddRow;
+        private System.Windows.Forms.Button btnJsonEdit;
         private System.Windows.Forms.DataGridViewTextBoxColumn 表名称;
         private System.Windows.Forms.DataGridViewTextBoxColumn 服务名;
         private System.Windows.Forms.DataGridViewComboBoxColumn 类型;
         private System.Windows.Forms.DataGridViewTextBoxColumn 查询条件;
-        private System.Windows.Forms.DataGridView dgridTable;
-        private System.Windows.Forms.DataGridViewTextBoxColumn name;
-        private System.Windows.Forms.Button btnAddRow;
+        private System.Windows.Forms.DataGridViewTextBoxColumn JSON值;
     }
 }

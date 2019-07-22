@@ -28,7 +28,28 @@ namespace CreateCord
             }
         }
 
-        public static void FWrite(string fileDate,string fileName)
+        /// <summary>
+        /// 追加List
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="path"></param>
+        public static void WriteAppendList(List<string> list, string path)
+        {
+            StreamWriter sw = File.AppendText(path);
+            foreach (string row in list)
+            {
+                sw.WriteLine(row);
+            }
+            sw.Flush();
+            sw.Close();
+        }
+
+        /// <summary>
+        /// 追加str
+        /// </summary>
+        /// <param name="fileDate"></param>
+        /// <param name="fileName"></param>
+        public static void WriteAppendStr(string fileDate,string fileName)
         {
             StreamWriter sw = File.AppendText(fileName);
             sw.Write(fileDate);
