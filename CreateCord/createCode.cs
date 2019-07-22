@@ -62,7 +62,11 @@ namespace CreateCord
                 MessageBox.Show("请选择需要生成的表", "提示");
                 return;
             }
+            if(t_path.Text.Substring(t_path.Text.Trim().Length-1,1)=="\\")
+
             subPathName = "" + t_path.Text + "" + fileName.Text + ""; //创建文件夹
+            else
+                subPathName = "" + t_path.Text + "\\" + fileName.Text + ""; //创建文件夹
 
             if (false == System.IO.Directory.Exists(subPathName))
             {
@@ -288,10 +292,11 @@ namespace CreateCord
                 header.Add("}");
                 FileOperate.FileWrite(header, subPath + "\\" + TableName + ".cs");
             }
-            
+
             CreateManger(TableName);
             CreateComponent((DataTable)dgvColumns.DataSource);
             CreateControllers((DataTable)dgvColumns.DataSource);
+            MessageBox.Show("生成成功，请查看！！","提示");
         }
 
         public void findNode2(string key, object objView, List<string> list)
@@ -418,7 +423,7 @@ namespace CreateCord
 
             string targetPath = CpPath + "\\ComponentBase.cs";//结果保存到桌面
             //  FileStream fs = new FileStream(targetPath, FileMode.Append);
-            string sourcePath = PathName() + "\\ComponentBase.cs"; ;
+            string sourcePath = PathName() + "\\ComponentBase.cs";
 
             bool isrewrite = false;
 
@@ -446,6 +451,7 @@ namespace CreateCord
             {
                 string strTypeName = dr["服务名"].ToString();
                 string strQueryCondition = dr["查询条件"].ToString();
+                if (null == strTypeName || strTypeName.Trim().Length == 0) continue;
                 if (strTypeName == "GetAll")
                 {
 
@@ -623,9 +629,9 @@ namespace CreateCord
             }
             this.dgvColumns.DataSource = dt;
             ((DataGridViewComboBoxColumn)dgvColumns.Columns["类型"]).DefaultCellStyle.NullValue = "HttpGet";
-            TableName =StrToUpper(dataName);
+            TableName = StrToUpper(dataName);
             tableName = dataName;
-
+            str_TemporaryStr = "";
         }
         #endregion
         #region 获取需要生成表的名称====================
@@ -650,14 +656,22 @@ namespace CreateCord
             DataRow dr = table.NewRow();
             dr[0] = TableName;
             table.Rows.Add(dr);
-            dgvColumns.Rows[table.Rows.Count - 1].Cells[1].ReadOnly = false;
-
-
+            dgvColumns.Rows[table.Rows.Count - 1].Cells["服务名"].ReadOnly = false;
         }
 
         private void btnJsonEdit_Click(object sender, EventArgs e)
         {
-            DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json' or type='varchar'");
+            if (null == dgvColumns.DataSource)
+            {
+                MessageBox.Show("请选择需要生成的表", "提示");
+                return;
+            }
+            DataRow[] list = IcreateType.GetColumns(tableName).Select("type='jsonb' or type='json'");
+            if (str_TemporaryStr != null && str_TemporaryStr.Length > 0)
+            {
+                openJsonEdit(str_TemporaryStr);
+                return;
+            }
             if (list.Length == 0)
             {
                 openJsonEdit("");
@@ -667,34 +681,21 @@ namespace CreateCord
                 string name = list[0]["name"].ToString();
                 if (list.Length != 0)
                 {
-
                     DataTable lists = IcreateType.GetData(tableName);
+                    if(lists.Rows.Count>0)
                     strvalue = lists.Rows[0]["" + name + ""].ToString();
 
                 }
                 string str_json_out = strvalue;
                 openJsonEdit(str_json_out);
             }
-        
-           
             str_TemporaryStr = str_jsonschame;
-            
         }
         public void openJsonEdit(string str_jsonschame)
         {
             JsonEditForm JsonEdit = new JsonEditForm();
-            if (str_TemporaryStr != null)
-            {
-                JsonEdit.str_json_column = str_TemporaryStr;
-            }
-            else
-            {
-                JsonEdit.str_json_column = str_jsonschame;
-
-            }
-
+            JsonEdit.str_json_column = str_jsonschame;
             JsonEdit.ShowDialog(this);
-
         }
 
         #region 将首字符大写=========================
@@ -707,8 +708,7 @@ namespace CreateCord
         {
             string str = s.Substring(0, 1).ToUpper() + s.Substring(1);
             return str;
-
-        } 
+        }
         #endregion
     }
 }

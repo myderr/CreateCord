@@ -32,7 +32,6 @@ namespace CreateCord
             }
             catch (Exception)
             {
-
                 MessageBox.Show("JSON格式出错", "提示");
                 return;
             }
@@ -46,7 +45,7 @@ namespace CreateCord
 
         private void b_close_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
         private void JsonEditForm_Load(object sender, EventArgs e)
