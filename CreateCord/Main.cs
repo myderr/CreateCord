@@ -100,7 +100,11 @@ namespace CreateCord
             {
                 this.Hide();
                 createCode from = new createCode(ConnectionString);
-                from.Show();
+                DialogResult dr = from.ShowDialog();
+                if (dr == DialogResult.Cancel)
+                {
+                    this.Close();
+                }
             }
             else
             {
